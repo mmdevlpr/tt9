@@ -153,7 +153,7 @@ public class AppHacks {
 	 * as one would expect when pressing ENTER.
 	 */
 	private boolean onEnterMultilineText() {
-		return inputConnection != null && inputConnection.commitText("\n", 1);
+		return sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER);
 	}
 
 
@@ -194,17 +194,18 @@ public class AppHacks {
 	}
 
 
-	private void sendDownUpKeyEvents(int keyCode) {
-		sendDownUpKeyEvents(keyCode, false);
+	private boolean sendDownUpKeyEvents(int keyCode) {
+		return sendDownUpKeyEvents(keyCode, false);
 	}
 
 
-	private void sendDownUpKeyEvents(int keyCode, boolean shift) {
+	private boolean sendDownUpKeyEvents(int keyCode, boolean shift) {
 		if (inputConnection != null) {
 			KeyEvent downEvent = new KeyEvent(0, 0, KeyEvent.ACTION_DOWN, keyCode, 0, shift ? KeyEvent.META_SHIFT_ON : 0);
 			KeyEvent upEvent = new KeyEvent(0, 0, KeyEvent.ACTION_UP, keyCode, 0, shift ? KeyEvent.META_SHIFT_ON : 0);
-			inputConnection.sendKeyEvent(downEvent);
-			inputConnection.sendKeyEvent(upEvent);
+			return inputConnection.sendKeyEvent(downEvent) && inputConnection.sendKeyEvent(upEvent);
 		}
+
+		return false;
 	}
 }
